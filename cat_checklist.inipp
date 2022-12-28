@@ -1,0 +1,9 @@
+[Main]
+
+[Info]
+name="terminalkitten"
+
+[Download]
+dependencies=["catcaretaker/cattypes","labricecat/argparser"]
+files=[]
+
