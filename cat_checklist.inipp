@@ -3,7 +3,8 @@
 [Info]
 name="terminalkitten"
 version="1.0.0"
+
 [Download]
-dependencies=["catcaretaker/cattypes","labricecat/argparser"]
+dependencies=["labricecat/argparser","catcaretaker/kittenlexer"]
 files=["kittenterminal.hpp","kittenterminal.cpp"]
 
