@@ -1,7 +1,7 @@
 # KittenTerminal
 A simple cat themed command line parser tool
 
-# installation
+## Installation
 To install this project and its dependencies simply install the [CatCaretaker]() and run following command inside your project folder:
 ```
 $ catcare sync
