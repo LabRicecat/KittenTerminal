@@ -6,5 +6,5 @@ version="1.0.0"
 
 [Download]
 dependencies=["labricecat/argparser","catcaretaker/kittenlexer"]
-files=["kittenterminal.hpp","kittenterminal.cpp"]
+files=["kittenterminal.hpp"]
 
