@@ -151,7 +151,7 @@ struct MeowingPromt {
 };
 
 const MeowingPromt::PlanEntry Cat_PrintLayout     = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::cout << p->look2string(); });
-const MeowingPromt::PlanEntry Cat_GetUserInput    = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::string i; std::getline(std::cin,i); p->memory.user_input = i; });
+const MeowingPromt::PlanEntry Cat_GetUserInput    = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::getline(std::cin,p->memory.user_input); });
 const MeowingPromt::PlanEntry Cat_Repeat          = MeowingPromt::PlanEntry([](MeowingPromt* p){ p->memory.repeat_cycle = true; });
 const MeowingPromt::PlanEntry Cat_ParseLine       = MeowingPromt::PlanEntry([](MeowingPromt* p){ 
     auto err = p->worker_cat.playwith(p->memory.user_input); 
