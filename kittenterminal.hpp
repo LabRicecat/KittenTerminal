@@ -146,6 +146,7 @@ struct MeowingPromt {
 
     void do_your_thing() {
         do { workdown_plan(); } while(memory.repeat_cycle && !memory.exit);
+        memory.exit = false;
     }
 };
 
@@ -153,7 +154,6 @@ const MeowingPromt::PlanEntry Cat_PrintLayout     = MeowingPromt::PlanEntry([](M
 const MeowingPromt::PlanEntry Cat_GetUserInput    = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::string i; std::getline(std::cin,i); p->memory.user_input = i; });
 const MeowingPromt::PlanEntry Cat_Repeat          = MeowingPromt::PlanEntry([](MeowingPromt* p){ p->memory.repeat_cycle = true; });
 const MeowingPromt::PlanEntry Cat_ParseLine       = MeowingPromt::PlanEntry([](MeowingPromt* p){ 
-    std::cout << "uinp: " << p->memory.user_input << "\n";
     auto err = p->worker_cat.playwith(p->memory.user_input); 
     if(err != worried_kitten::OK && p->panic) p->panic(err,p->worker_cat.current_error); 
 });
