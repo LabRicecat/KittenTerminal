@@ -29,6 +29,7 @@ struct kittenability {
 using kittenskills = std::map<std::string,kittenability>;
 
 struct KittenWorker {
+    // The lexer used, can be modified
     KittenLexer lexer;
     kittenskills skills;
 
@@ -71,17 +72,17 @@ struct KittenWorker {
         if(line.empty()) return worried_kitten::OK;
 
         std::string command = line[0];
-        kittenability com = get_skill(command);
+        kittenability* com = get_skill(command);
         if(!com) return worried_kitten::UNKNOWN_COMMAND;
 
         line.erase(line.begin());
-        kittens_howto todo = com.knowledge.parse(line);
+        kittens_howto todo = com->knowledge.parse(line);
         if(!todo && todo != ArgParserErrors::NO_ARGS) {
             current_error = todo.error();
             return worried_kitten::INVALID_ARGUMENTS;
         }
 
-        current_error = com.perform(todo);
+        current_error = com->perform(todo);
         if(current_error == "") return worried_kitten::OK;
         return worried_kitten::COMMAND_ERROR; 
     }
@@ -89,5 +90,74 @@ struct KittenWorker {
     // empty if no error occured
     std::string current_error = "";
 };
+
+struct MeowingPromt {
+    struct Memory {
+        std::string user_input;
+        std::map<std::string,std::string*> var_register;
+        bool repeat_cycle = false;
+        bool exit = false;
+    }memory;
+
+    struct PlanEntry {
+        void(*proc)(MeowingPromt*) = nullptr;
+
+        PlanEntry(void(*p)(MeowingPromt*)) : proc(p) {}
+        void operator=(void(*p)(MeowingPromt*)) { proc = p; }
+    };
+
+    std::vector<PlanEntry> working_plan;
+    KittenWorker worker_cat;
+    std::string promt_layout;
+
+    void(*panic)(worried_kitten,std::string) = nullptr;
+
+    MeowingPromt& set_look(std::string look) { promt_layout = look; return *this; }
+    MeowingPromt& plan_work(std::vector<PlanEntry> plan) { working_plan = plan; return *this; }
+    MeowingPromt& learn_value(std::string name, std::string* var) { memory.var_register[name] = var; return *this; }
+    MeowingPromt& on_panic(void(*on_panic)(worried_kitten,std::string)) { panic = on_panic; return *this; }
+    MeowingPromt& employ_worker(KittenWorker worker) { worker_cat = worker; return *this; }
+
+    std::string look2string() {
+        std::string ret;
+        std::string tmp;
+        bool in_br = false;
+        for(auto i : promt_layout) {
+            if(i == '{') {
+                if(tmp != "") ret += "{" + tmp;
+                in_br = true;
+            }
+            else if(i == '}') {
+                if(memory.var_register.count(tmp) == 0) ret += "{" + tmp + "}";
+                else ret += *memory.var_register[tmp];
+                in_br = false;
+                tmp = "";
+            }
+            else if(in_br) tmp += i;
+            else ret += i;
+        }
+        if(tmp != "") ret += "{" + tmp;
+        return ret;
+    }
+
+    void workdown_plan() {
+        for(auto i : working_plan) i.proc(this);
+    }
+
+    void do_your_thing() {
+        do { workdown_plan(); } while(memory.repeat_cycle && !memory.exit);
+    }
+};
+
+const MeowingPromt::PlanEntry Cat_PrintLayout     = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::cout << p->look2string(); });
+const MeowingPromt::PlanEntry Cat_GetUserInput    = MeowingPromt::PlanEntry([](MeowingPromt* p){ std::string i; std::getline(std::cin,i); p->memory.user_input = i; });
+const MeowingPromt::PlanEntry Cat_Repeat          = MeowingPromt::PlanEntry([](MeowingPromt* p){ p->memory.repeat_cycle = true; });
+const MeowingPromt::PlanEntry Cat_ParseLine       = MeowingPromt::PlanEntry([](MeowingPromt* p){ 
+    std::cout << "uinp: " << p->memory.user_input << "\n";
+    auto err = p->worker_cat.playwith(p->memory.user_input); 
+    if(err != worried_kitten::OK && p->panic) p->panic(err,p->worker_cat.current_error); 
+});
+
+#define Cat_CustomFunction(f) MeowingPromt::PlanEntry(f)
 
 #endif
