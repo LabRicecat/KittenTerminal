@@ -2,15 +2,15 @@
 A simple cat themed command line parser tool
 
 ## Installation
-To install this project and its dependencies simply install the [CatCaretaker]() and run following command inside your project folder:
+To install this project as dependencies simply install the [CatCaretaker](https://github.com/labricecat/catcaretaker) and run following command inside your project folder:
 ```
-$ catcare sync
+$ catcare get labricecat/kittenterminal@main
 ```
-After that you can simply include the file `catmods/kittenterminal/kittenterminal.hpp`
+After that you can simply include the file `catpkgs/kittenterminal/kittenterminal.hpp`
 
 ## Example
 ```cpp
-#include "catmods/kittenterminal/kittenterminal.hpp"
+#include "catpkgs/kittenterminal/kittenterminal.hpp"
 
 int main() {
     std::string promt_name = "meow";
